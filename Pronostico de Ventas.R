@@ -84,10 +84,17 @@ autoplot(decom)
 #-------------#
 #-------#
 # Pronostico del modelo de ventas totales 
+modelo_arima <- auto.arima(y,d=1,D=1, stepwise = FALSE , approximation = FALSE , trace = TRUE)
+print(modelo_arima)
+checkresiduals(modelo_arima)
+
+
 pronostico <- forecast(modelo_arima, h=6, level = c(95))
 autoplot(pronostico) +ggtitle("Pronostico de ventas proximos 6 meses")+ theme_bw()
 
+#Exportamos el data frame a excel
 df.pronostico <- as.data.frame(pronostico)
+
 
 write.xlsx(df.pronostico , "pronostico_ventas.xlsx")
 
