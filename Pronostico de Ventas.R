@@ -38,13 +38,13 @@ datos_filtrados
 #Resumimos las ventas, para tenerlas por meses 
 ventas_mensuales <- datos_filtrados %>%
   
-  mutate(mes = format(fecha,"%m"), año = format(fecha,"%Y")) %>%
+  mutate(mes = format(fecha,"%m"), year = format(fecha,"%Y")) %>%
   
-  group_by(mes,año) %>%  #Resumimos las ventas por mes y a?o con la funcion group by
+  group_by(mes,year) %>%  #Resumimos las ventas por mes y a?o con la funcion group by
   
   summarise(ventas = sum(ventas))
 
-ventas_mensuales <- ventas_mensuales[with(ventas_mensuales,order(ventas_mensuales$año)),]
+ventas_mensuales <- ventas_mensuales[with(ventas_mensuales,order(ventas_mensuales$year)),]
 ventas_mensuales
 
 #Corregimos los valores NA que da?an la estimacion
@@ -121,9 +121,9 @@ ventas_fil_prod<- ventas_productos %>% filter(ventas >= ventas[10])
 
 ventas_mensuales_productos <- datos_filtrados1 %>%
   
-  mutate(mes = format(fecha,"%m"), año = format(fecha,"%Y")) %>%
+  mutate(mes = format(fecha,"%m"), year = format(fecha,"%Y")) %>%
   
-  group_by(mes,año,productos) %>%  #Resumimos las ventas por mes y a?o con la funcion group by
+  group_by(mes,year,productos) %>%  #Resumimos las ventas por mes y a?o con la funcion group by
   
   summarise(ventas = sum(ventas)) %>% 
   
@@ -134,7 +134,7 @@ ventas_mensuales_productos <- datos_filtrados1 %>%
          | productos == ventas_fil_prod$productos[9] | productos == ventas_fil_prod$productos[10])
 
 
-ventas_mensuales_productos <- ventas_mensuales_productos[with(ventas_mensuales_productos,order(decreasing = FALSE,ventas_mensuales_productos$año)),]
+ventas_mensuales_productos <- ventas_mensuales_productos[with(ventas_mensuales_productos,order(decreasing = FALSE,ventas_mensuales_productos$year)),]
 ventas_mensuales_productos
 
 ###----------------------------------------------------------------------##
@@ -184,7 +184,7 @@ autoplot(dd)+ ggtitle("Grafico de ventas ", nombres[4]) + ylab("VR TOTAL M$000")
 
 # B) Segunda proyeccion
 
-serie2 <- productos_wide %>% select(2,5) %>% filter(año > 2019)
+serie2 <- productos_wide %>% select(2,5) %>% filter(year > 2019)
 #serie2 <- serie2[!(is.na(serie2[3])),] #Borramos los valores NA
 
 
@@ -223,7 +223,7 @@ autoplot(serie2_NA_estimado, series="Interpolated") +
 
 # C) Tercera proyeccion
 
-serie3 <- productos_wide %>% select(2,6) %>% filter(año > 2019)
+serie3 <- productos_wide %>% select(2,6) %>% filter(year > 2019)
 
 
 #Creamos serie de tiempo
