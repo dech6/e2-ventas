@@ -11,7 +11,7 @@ library(ggplot2)
 library(plotly)
 library(hrbrthemes)
 library(openxlsx)
-library(rio)
+
 ##-------------------------------------------------------------------------------------##
 #Cargamos los datos
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
@@ -159,13 +159,27 @@ write.xlsx(productos_wide , "ventas_top.xlsx")
 # a) Primer proyeccion
 
 serie1 <- productos_wide %>% select(2,4) #Data frame nuevo con el primer producto
-serie1 <- serie1[!(is.na(serie1[3])),]  #Borramos los valores NA de la fila del producto
+#serie1 <- serie1[!(is.na(serie1[3])),]  #Borramos los valores NA de la fila del producto
 
 
-
-dd <- ts(serie1[3], start= c(2013,01),end =c(2022,02),frequency = 12)
+#Creamos la serie de tiempo
+dd <- ts(serie1[3], start= c(2020,01),end =c(2022,02),frequency = 12)
 dd
-autoplot(dd)+ ggtitle("Grafico de ventas ", nombres[4]) + ylab("VR TOTAL M$000")+theme_modern_rc()
+
+
+#Rellenamos los valores NA de la serie (Interpolacion)
+serie1_NA_estimado<- na.interp(dd)
+
+
+#Graficamos las ventas del producto
+autoplot(serie1_NA_estimado, series="Interpolated") +
+  autolayer(dd, series="Original") +
+  scale_colour_manual(
+    values=c(`Interpolated`="red",`Original`="sky blue"))+ ggtitle("Grafico de ventas ", nombres[4])+ ylab("Valor de ventas") +
+  theme_modern_rc()
+
+
+#autoplot(dd)+ ggtitle("Grafico de ventas ", nombres[4]) + ylab("VR TOTAL M$000")+theme_modern_rc()
 
 ###----------------------------------------------------------------------##
 ##----------------------------------------------------------------------##
@@ -201,9 +215,6 @@ autoplot(serie2_NA_estimado, series="Interpolated") +
   scale_colour_manual(
     values=c(`Interpolated`="red",`Original`="sky blue"))+ ggtitle("Grafico de ventas ", nombres[5])+ ylab("Valor de ventas") +
   theme_modern_rc()
-
-
-
 
 
 ###----------------------------------------------------------------------##
@@ -242,9 +253,92 @@ autoplot(serie3_NA_estimado, series="Interpolated") +
     values=c(`Interpolated`="red",`Original`="sky blue"))+ ggtitle("Grafico de ventas ", nombres[6])+ ylab("Valor de ventas") +
   theme_modern_rc()
 
+###----------------------------------------------------------------------##
+##----------------------------------------------------------------------##
+#Estimacion 
 
 
 
+
+
+
+
+
+
+###----------------------------------------------------------------------##
+##----------------------------------------------------------------------##
+
+# d) cuarta proyeccion
+
+serie4 <- productos_wide %>% select(2,7)
+
+
+#Creamos serie de tiempo
+dd3<- ts(serie4[3],start = c(2013,1),end = c(2022,5),frequency = 12)
+dd3
+
+
+#Interpolacion
+serie4_NA_estimado <- na.interp(dd3)
+
+
+#Graficamos las ventas del producto
+autoplot(serie4_NA_estimado, series="Interpolated") +
+  autolayer(dd3, series="Original") +
+  scale_colour_manual(
+    values=c(`Interpolated`="red",`Original`="sky blue"))+ ggtitle("Grafico de ventas ", nombres[7])+ ylab("Valor de ventas") +
+  theme_modern_rc()
+
+###----------------------------------------------------------------------##
+##----------------------------------------------------------------------##
+#Estimacion 
+
+
+
+
+
+
+
+
+
+###----------------------------------------------------------------------##
+##----------------------------------------------------------------------##
+
+# e) Quinta proyeccion
+
+serie5 <- productos_wide %>% select(2,8) 
+
+
+#Creamos serie de tiempo
+dd4<- ts(serie5[3],start = c(2013,1),end = c(2022,5),frequency = 12)
+dd4
+ 
+
+#Interpolacion
+serie5_NA_estimado <- na.interp(dd4)
+
+
+#Graficamos las ventas del producto
+autoplot(serie5_NA_estimado, series="Interpolated") +
+  autolayer(dd4, series="Original") +
+  scale_colour_manual(
+    values=c(`Interpolated`="red",`Original`="sky blue"))+ ggtitle("Grafico de ventas ", nombres[8])+ ylab("Valor de ventas") +
+  theme_modern_rc()
+
+###----------------------------------------------------------------------##
+##----------------------------------------------------------------------##
+#Estimacion 
+
+
+
+
+
+
+
+
+
+###----------------------------------------------------------------------##
+##----------------------------------------------------------------------##
 
 
 
