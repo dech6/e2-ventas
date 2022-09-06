@@ -98,7 +98,7 @@ df.pronostico <- as.data.frame(pronostico)
 
 
 
-write.xlsx(df.pronostico , file = "pronostico_ventas.xlsx", sheetName= "1",)
+write.xlsx(df.pronostico , file = "pronostico_ventas.xlsx")
 
 
 
@@ -172,7 +172,7 @@ serie1 <- productos_wide %>% select(2,4) #Data frame nuevo con el primer product
 
 
 #Creamos la serie de tiempo
-dd <- ts(serie1[3], start= c(2020,01),end =c(2022,02),frequency = 12)
+dd <- ts(serie1[3], start= c(2013,01),end =c(2022,02),frequency = 12)
 dd
 
 
@@ -194,11 +194,20 @@ autoplot(serie1_NA_estimado, series="Interpolated") +
 ##----------------------------------------------------------------------##
 #Estimacion 
 
+ddatos1 <- diff(serie1_NA_estimado)
+adf.test(ddatos1, alternative = "stationary")
+
+#Aplicando diferencias , observamos que la prueba si es estacionaria
 
 
+############ MODELO ARIMA
+modelo_arima1 <- auto.arima(serie1_NA_estimado,d=1,D=1, stepwise = FALSE , approximation = FALSE , trace = TRUE)
+print(modelo_arima1)
+checkresiduals(modelo_arima1)
 
 
-
+pronostico <- forecast(modelo_arima1, h=6, level = c(95))
+autoplot(pronostico) +ggtitle("Pronostico de ventas proximos 6 meses", nombres[4])+ theme_modern_rc()
 
 
 
@@ -229,6 +238,23 @@ autoplot(serie2_NA_estimado, series="Interpolated") +
 ###----------------------------------------------------------------------##
 ##----------------------------------------------------------------------##
 #Estimacion 
+
+ddatos2 <- diff(serie2_NA_estimado)
+adf.test(ddatos2, alternative = "stationary")
+
+#Aplicando diferencias , observamos que la prueba si es estacionaria
+
+
+############ MODELO ARIMA
+modelo_arima2 <- auto.arima(serie2_NA_estimado,d=1,D=1, stepwise = FALSE , approximation = FALSE , trace = TRUE)
+print(modelo_arima2)
+checkresiduals(modelo_arima2)
+
+
+pronostico <- forecast(modelo_arima2, h=6, level = c(95))
+autoplot(pronostico) +ggtitle("Pronostico de ventas proximos 6 meses", nombres[4])+ theme_bw()
+
+
 
 
 
