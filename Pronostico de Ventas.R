@@ -11,7 +11,8 @@ library(ggplot2)
 library(plotly)
 library(hrbrthemes)
 library(openxlsx)
-
+library(car)
+library(urca)
 ##-------------------------------------------------------------------------------------##
 #Cargamos los datos
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
@@ -206,6 +207,10 @@ print(modelo_arima1)
 checkresiduals(modelo_arima1)
 
 
+residualPlot(modelo_arima1)
+
+x1<-ur.df(residuales)
+summary(x1)
 pronostico <- forecast(modelo_arima1, h=6, level = c(95))
 autoplot(pronostico) +ggtitle("Pronostico de ventas proximos 6 meses", nombres[4])+ theme_modern_rc()
 
