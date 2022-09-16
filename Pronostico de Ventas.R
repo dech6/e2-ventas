@@ -31,7 +31,7 @@ class(datos$fecha)
 #datos$fecha1 <- NULL #-> Funcion para borrar datos 
 
 ##-----------------------------------------------------------------##
-# Creamos un nuevo data frame con las columnas necesarias para el analisi
+# Creamos un nuevo data frame con las columnas necesarias para el analisis
 
 datos_filtrados <- datos %>% select(c(ventas,fecha))
 datos_filtrados
@@ -154,7 +154,10 @@ ventas_mensuales_productos
 
 productos_wide <- pivot_wider(ventas_mensuales_productos, names_from = productos,
                               values_from = ventas) 
-nombres<-names(productos_wide)
+
+#Data farme, remplazado valores NA por 0 (No se vendieron)
+
+ productos_wide[is.na(productos_wide)] <- 0
 
 #---------------------------------------------------------------------------------#
 ##Exportamos datos a excel
@@ -178,18 +181,15 @@ dd
 
 
 #Rellenamos los valores NA de la serie (Interpolacion)
-serie1_NA_estimado<- na.interp(dd)
+#serie1_NA_estimado<- na.interp(dd)
 
 
 #Graficamos las ventas del producto
-autoplot(serie1_NA_estimado, series="Interpolated") +
-  autolayer(dd, series="Original") +
-  scale_colour_manual(
-    values=c(`Interpolated`="red",`Original`="sky blue"))+ ggtitle("Grafico de ventas ", nombres[4])+ ylab("Valor de ventas") +
+autoplot(dd)+ ggtitle("Grafico de ventas ", nombres[4])+ ylab("Valor de ventas") +
   theme_modern_rc()
 
 
-#autoplot(dd)+ ggtitle("Grafico de ventas ", nombres[4]) + ylab("VR TOTAL M$000")+theme_modern_rc()
+
 
 ###----------------------------------------------------------------------##
 ##----------------------------------------------------------------------##
@@ -202,26 +202,23 @@ adf.test(ddatos1, alternative = "stationary")
 
 
 ############ MODELO ARIMA
-modelo_arima1 <- auto.arima(serie1_NA_estimado,d=1,D=1, stepwise = FALSE , approximation = FALSE , trace = TRUE)
+modelo_arima1 <- auto.arima(dd,d=1,D=1, stepwise = FALSE , approximation = FALSE , trace = TRUE)
 print(modelo_arima1)
 checkresiduals(modelo_arima1)
 
 
-residualPlot(modelo_arima1)
 
-x1<-ur.df(residuales)
-summary(x1)
-pronostico <- forecast(modelo_arima1, h=6, level = c(95))
-autoplot(pronostico) +ggtitle("Pronostico de ventas proximos 6 meses", nombres[4])+ theme_modern_rc()
+pronostico1 <- forecast(modelo_arima1, h=6, level = c(95))
+autoplot(pronostico1) +ggtitle("Pronostico de ventas proximos 6 meses", nombres[4])+ theme_modern_rc()
 
-
+df.pronostico1 <- as.data.frame(pronostico1)
 
 ###----------------------------------------------------------------------##
 ##----------------------------------------------------------------------##
 
 # B) Segunda proyeccion
 
-serie2 <- productos_wide %>% select(2,5) %>% filter(year > 2019)
+serie2 <- productos_wide %>% select(2,5) 
 #serie2 <- serie2[!(is.na(serie2[3])),] #Borramos los valores NA
 
 
@@ -229,14 +226,11 @@ serie2 <- productos_wide %>% select(2,5) %>% filter(year > 2019)
 dd1<- ts(serie2[3],start = c(2020,1),end = c(2022,2),frequency = 12)
 dd1
 #Rellenamos los valores NA de la serie (Interpolacion)
-serie2_NA_estimado<- na.interp(dd1)
+#serie2_NA_estimado<- na.interp(dd1)
 
 
 #Graficamos las ventas del producto
-autoplot(serie2_NA_estimado, series="Interpolated") +
-  autolayer(dd1, series="Original") +
-  scale_colour_manual(
-    values=c(`Interpolated`="red",`Original`="sky blue"))+ ggtitle("Grafico de ventas ", nombres[5])+ ylab("Valor de ventas") +
+autoplot(dd1)+ ggtitle("Grafico de ventas ", nombres[5])+ ylab("Valor de ventas") +
   theme_modern_rc()
 
 
@@ -244,14 +238,9 @@ autoplot(serie2_NA_estimado, series="Interpolated") +
 ##----------------------------------------------------------------------##
 #Estimacion 
 
-ddatos2 <- diff(serie2_NA_estimado)
-adf.test(ddatos2, alternative = "stationary")
-
-#Aplicando diferencias , observamos que la prueba si es estacionaria
-
 
 ############ MODELO ARIMA
-modelo_arima2 <- auto.arima(serie2_NA_estimado,d=1,D=1, stepwise = FALSE , approximation = FALSE , trace = TRUE)
+modelo_arima2 <- auto.arima(dd1,d=1,D=1, stepwise = FALSE , approximation = FALSE , trace = TRUE)
 print(modelo_arima2)
 checkresiduals(modelo_arima2)
 
@@ -274,7 +263,7 @@ autoplot(pronostico) +ggtitle("Pronostico de ventas proximos 6 meses", nombres[4
 
 # C) Tercera proyeccion
 
-serie3 <- productos_wide %>% select(2,6) %>% filter(year > 2019)
+serie3 <- productos_wide %>% select(2,6) 
 
 
 #Creamos serie de tiempo
@@ -283,7 +272,7 @@ dd2
 
 
 #Interpolacion
-serie3_NA_estimado <- na.interp(dd2)
+#serie3_NA_estimado <- na.interp(dd2)
 
 
 #Graficamos las ventas del producto
