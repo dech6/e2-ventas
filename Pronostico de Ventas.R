@@ -176,19 +176,17 @@ serie1 <- productos_wide %>% select(2,4) #Data frame nuevo con el primer product
 
 
 #Creamos la serie de tiempo
-dd <- ts(serie1[3], start= c(2013,01),end =c(2022,02),frequency = 12)
+dd <- ts(serie1[3], start= 2013,frequency = 12)
 dd
 
 
 #Rellenamos los valores NA de la serie (Interpolacion)
 #serie1_NA_estimado<- na.interp(dd)
-
+nombres <- names(productos_wide)
 
 #Graficamos las ventas del producto
 autoplot(dd)+ ggtitle("Grafico de ventas ", nombres[4])+ ylab("Valor de ventas") +
-  theme_modern_rc()
-
-
+  theme_minimal()
 
 
 ###----------------------------------------------------------------------##
@@ -209,29 +207,28 @@ checkresiduals(modelo_arima1)
 
 
 pronostico1 <- forecast(modelo_arima1, h=6, level = c(95))
-autoplot(pronostico1) +ggtitle("Pronostico de ventas proximos 6 meses", nombres[4])+ theme_modern_rc()
+autoplot(pronostico1) +ggtitle("Pronostico de ventas proximos 6 meses", nombres[4])+ theme_minimal()
 
 df.pronostico1 <- as.data.frame(pronostico1)
+
 
 ###----------------------------------------------------------------------##
 ##----------------------------------------------------------------------##
 
 # B) Segunda proyeccion
 
+#seleccionamos los datos
 serie2 <- productos_wide %>% select(2,5) 
-#serie2 <- serie2[!(is.na(serie2[3])),] #Borramos los valores NA
 
 
 #Creamos la serie de tiempo
-dd1<- ts(serie2[3],start = c(2020,1),end = c(2022,2),frequency = 12)
+dd1<- ts(serie2[3],start = 2013, frequency = 12)
 dd1
-#Rellenamos los valores NA de la serie (Interpolacion)
-#serie2_NA_estimado<- na.interp(dd1)
 
 
 #Graficamos las ventas del producto
 autoplot(dd1)+ ggtitle("Grafico de ventas ", nombres[5])+ ylab("Valor de ventas") +
-  theme_modern_rc()
+  theme_minimal()
 
 
 ###----------------------------------------------------------------------##
@@ -244,18 +241,13 @@ modelo_arima2 <- auto.arima(dd1,d=1,D=1, stepwise = FALSE , approximation = FALS
 print(modelo_arima2)
 checkresiduals(modelo_arima2)
 
+#Aplicamos el pronostico
+pronostico2 <- forecast(modelo_arima2, h=6, level = c(95))
+autoplot(pronostico2) +ggtitle("Pronostico de ventas proximos 6 meses", nombres[5])+ theme_minimal()
 
-pronostico <- forecast(modelo_arima2, h=6, level = c(95))
-autoplot(pronostico) +ggtitle("Pronostico de ventas proximos 6 meses", nombres[4])+ theme_bw()
+#Guardamos el pronostico en un data frame
 
-
-
-
-
-
-
-
-
+df.pronostico2 <- as.data.frame(pronostico2)
 
 
 ###----------------------------------------------------------------------##
@@ -267,29 +259,32 @@ serie3 <- productos_wide %>% select(2,6)
 
 
 #Creamos serie de tiempo
-dd2<- ts(serie3[3],start = c(2020,1),end = c(2022,2),frequency = 12)
-dd2
-
-
-#Interpolacion
-#serie3_NA_estimado <- na.interp(dd2)
+dd3<- ts(serie3[3],start = 2013,frequency = 12)
+dd3
 
 
 #Graficamos las ventas del producto
-autoplot(serie3_NA_estimado, series="Interpolated") +
-  autolayer(dd2, series="Original") +
-  scale_colour_manual(
-    values=c(`Interpolated`="red",`Original`="sky blue"))+ ggtitle("Grafico de ventas ", nombres[6])+ ylab("Valor de ventas") +
-  theme_modern_rc()
+autoplot(dd3)+ ggtitle("Grafico de ventas ", nombres[6])+ ylab("Valor de ventas") +
+  theme_minimal()
+
 
 ###----------------------------------------------------------------------##
 ##----------------------------------------------------------------------##
 #Estimacion 
 
 
+############ MODELO ARIMA
+modelo_arima3 <- auto.arima(dd3,d=1,D=1, stepwise = FALSE , approximation = FALSE , trace = TRUE)
+print(modelo_arima3)
+checkresiduals(modelo_arima3)
 
+#Aplicamos el pronostico
+pronostico3 <- forecast(modelo_arima3, h=6, level = c(95))
+autoplot(pronostico3) +ggtitle("Pronostico de ventas proximos 6 meses", nombres[6])+ theme_minimal()
 
+#Guardamos el pronostico en un data frame
 
+df.pronostico3 <- as.data.frame(pronostico3)#Graficamos las ventas del producto
 
 
 
@@ -303,30 +298,31 @@ serie4 <- productos_wide %>% select(2,7)
 
 
 #Creamos serie de tiempo
-dd3<- ts(serie4[3],start = c(2013,1),end = c(2022,5),frequency = 12)
-dd3
-
-
-#Interpolacion
-serie4_NA_estimado <- na.interp(dd3)
-
+dd4<- ts(serie4[3],start = 2013, frequency = 12)
+dd4
 
 #Graficamos las ventas del producto
-autoplot(serie4_NA_estimado, series="Interpolated") +
-  autolayer(dd3, series="Original") +
-  scale_colour_manual(
-    values=c(`Interpolated`="red",`Original`="sky blue"))+ ggtitle("Grafico de ventas ", nombres[7])+ ylab("Valor de ventas") +
-  theme_modern_rc()
+autoplot(dd4)+ ggtitle("Grafico de ventas ", nombres[7])+ ylab("Valor de ventas") +
+  theme_minimal()
+
 
 ###----------------------------------------------------------------------##
 ##----------------------------------------------------------------------##
 #Estimacion 
 
 
+############ MODELO ARIMA
+modelo_arima4 <- auto.arima(dd4,d=1,D=1, stepwise = FALSE , approximation = FALSE , trace = TRUE)
+print(modelo_arima4)
+checkresiduals(modelo_arima4)
 
+#Aplicamos el pronostico
+pronostico4 <- forecast(modelo_arima3, h=6, level = c(95))
+autoplot(pronostico3) +ggtitle("Pronostico de ventas proximos 6 meses", nombres[7])+ theme_minimal()
 
+#Guardamos el pronostico en un data frame
 
-
+df.pronostico4 <- as.data.frame(pronostico4)#Graficamos las ventas del producto
 
 
 
@@ -339,30 +335,35 @@ serie5 <- productos_wide %>% select(2,8)
 
 
 #Creamos serie de tiempo
-dd4<- ts(serie5[3],start = c(2013,1),end = c(2022,5),frequency = 12)
-dd4
+dd5<- ts(serie5[3],start = 2013, frequency = 12)
+dd5
  
-
-#Interpolacion
-serie5_NA_estimado <- na.interp(dd4)
-
-
 #Graficamos las ventas del producto
-autoplot(serie5_NA_estimado, series="Interpolated") +
-  autolayer(dd4, series="Original") +
-  scale_colour_manual(
-    values=c(`Interpolated`="red",`Original`="sky blue"))+ ggtitle("Grafico de ventas ", nombres[8])+ ylab("Valor de ventas") +
-  theme_modern_rc()
+autoplot(dd5)+ ggtitle("Grafico de ventas ", nombres[8])+ 
+  ylab("Valor de ventas") + theme_minimal()
+
 
 ###----------------------------------------------------------------------##
 ##----------------------------------------------------------------------##
 #Estimacion 
 
 
+############ MODELO ARIMA
+modelo_arima5 <- auto.arima(dd5,d=1,D=1, stepwise = FALSE ,
+                            approximation = FALSE , trace = TRUE)
+print(modelo_arima5)
+checkresiduals(modelo_arima5)
 
+#Aplicamos el pronostico
+pronostico5 <- forecast(modelo_arima5, h=6, level = c(95))
 
+autoplot(pronostico5) +
+  ggtitle("Pronostico de ventas proximos 6 meses", nombres[8])+ 
+  theme_minimal()
 
+#Guardamos el pronostico en un data frame
 
+df.pronostico3 <- as.data.frame(pronostico3)#Graficamos las ventas del producto
 
 
 
